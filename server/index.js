@@ -11,10 +11,12 @@ import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import userSchema from "./schemas/Userdata.js";
 import MessageSchema from "./schemas/MessageSchema.js";
 import GroupSchema from "./schemas/GroupSchema.js";
+import path from 'path'
+import { fileURLToPath } from 'url';
 dotenv.config();
 
 
-const app = express();
+
 
 // Cloudinary Configuration
 cloudinary.config({
@@ -33,6 +35,10 @@ const storage = new CloudinaryStorage({
 });
 const upload = multer({ storage: storage });
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const app = express();
+
 // Set up CORS
 app.use(cors({
   origin: "http://localhost:3000", // Allow your frontend's origin
@@ -42,6 +48,7 @@ app.use(cors({
 
 // Middleware for JSON parsing
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../client/build')));
 
 // MongoDB connection
 mongodb();
@@ -55,6 +62,7 @@ mongodb();
 const User = mongoose.model('User', userSchema);
 const Message = mongoose.model("Chats", MessageSchema);
 const Group = mongoose.model("Groups", GroupSchema);
+
 
 // POST endpoint for login
 app.post("/login", async (req, res) => {
